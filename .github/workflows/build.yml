@@ -1,54 +1,39 @@
-name: Build and Test
+name: NodeJS with jest test
 
-# Manual trigger only - to enable automatic triggers, uncomment one of these:
-# on:
-#   push:
-#     branches: [ main, develop ]
-#   pull_request:
-#     branches: [ main ]
+#on:
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: 
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-    
+
+    strategy:
+      matrix:
+        node-version: [24.x]
+        
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
+
+    - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: changeFolder
+        node-version: ${{ matrix.node-version }}
+
+    - name: ChangeFolder
       run: cd jestway
       
-    - name: Run tests
-      run: npm test
-    
-    - name: Build application
-      run: npm run start &
-      
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Package application
-      run: tar -czf expense-tracker.tar.gz --exclude=node_modules --exclude=.git .
+    - name: Build
+      run: | 
+        cd jestway
+        npm install
+
+    - name: Test
+      run: | 
+        cd jestway
+        npm run test
