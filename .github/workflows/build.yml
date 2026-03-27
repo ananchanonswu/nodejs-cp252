@@ -25,8 +25,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-   # - name: ChangeFolder
-   #   run: cd jestway
+    # - name: ChangeFolder
+    #  run: cd jestway
       
     - name: Build
       run: | 
